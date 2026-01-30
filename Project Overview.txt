@@ -1,0 +1,233 @@
+================================================================================
+NEON HEALTH SYSTEM v3.0
+A.R.I.A. (Adaptive Response Intelligence Algorithm)
+================================================================================
+
+PROJECT OVERVIEW & DOCUMENTATION
+--------------------------------
+
+1. PROJECT PURPOSE
+================================================================================
+
+Neon Health is a privacy-first, locally-hosted health tracking application 
+with integrated AI coaching. Designed with a retro-futuristic "vaporwave" 
+aesthetic, it provides:
+
+- Mood tracking with calendar visualization
+- Weight and BMI monitoring with progress charts
+- Local AI fitness coaching via llama.cpp
+- Complete data sovereignty (no cloud, no accounts, no tracking)
+
+Target Audience: Privacy-conscious individuals who want AI-assisted health 
+management without surrendering personal data to corporations.
+
+2. CORE PHILOSOPHY
+================================================================================
+
+DATA SOVEREIGNTY:
+All health data stored locally in SQLite database (health.db). User owns 
+their data completely. No internet required except for initial AI model 
+download.
+
+LOCAL AI:
+Uses llama.cpp to run Large Language Models (LLMs) directly on user's 
+hardware. No API keys, no subscription fees, no data sent to external 
+servers.
+
+AESTHETIC EXPERIENCE:
+Vaporwave design language (neon cyan/pink/purple, scanlines, monospace 
+fonts) makes health tracking feel like a cyberpunk interface rather than 
+a clinical chore.
+
+3. SYSTEM ARCHITECTURE
+================================================================================
+
+┌─────────────────────────────────────────────────────────────┐
+│                    WEB INTERFACE                            │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐   │
+│  │ MOOD_MATRIX  │  │ BIO_METRICS  │  │   A.R.I.A.       │   │
+│  │  (Calendar)  │  │ (Charts/Log) │  │  (AI Coach)      │   │
+│  └──────────────┘  └──────────────┘  └──────────────────┘   │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+              Flask Web Server (Python)
+                     │
+         ┌───────────┴───────────┐
+         │                       │
+    SQLite Database         LLM Manager
+    (health.db)             (llama.cpp)
+    - moods                 - Local LLM
+    - weights               - Conversation
+    - workouts              - Health context
+    - profile               injection
+         │                       │
+         └───────────┬───────────┘
+                     │
+            ┌────────┴────────┐
+            │   LLama-Server  │
+            │   (Port 8080)   │
+            └─────────────────┘
+
+4. MODULE DESCRIPTIONS
+================================================================================
+
+A. MOOD_MATRIX TAB
+------------------
+Visual: Month/Year calendar view with color-coded mood levels
+Colors: Red (#FF0055) → Purple (#B026FF) → Cyan (#00F0FF)
+Interaction: Click date to log mood (1-5) + notes
+Database: moods table (date, level, note)
+
+B. BIO_METRICS TAB
+------------------
+Features:
+- Profile setup (height, age, gender, start/target weight)
+- Daily weight logging with auto BMI calculation
+- Dual-axis Chart.js (Weight + BMI over time)
+- Progress bar with animated runner (visual goal tracking)
+- Recent entry list with delete function
+
+Calculations:
+- BMI = weight(kg) / (height(m))²
+- Progress % = (current - start) / (target - start) × 100
+
+C. A.R.I.A. TAB (AI Integration)
+--------------------------------
+Components:
+- Model selector (scans /models/ for .gguf files)
+- Context window slider (2048-8192 tokens)
+- Chat interface with conversation memory
+- Quick workout logger
+- "Clear Memory" function (reset conversation)
+
+AI Architecture:
+- System prompt defines personality (vaporwave coach)
+- Health data injected ONLY on first message
+- Conversation history maintained for context
+- Max 10 exchanges stored (sliding window)
+
+5. TECHNOLOGY STACK
+================================================================================
+
+Backend:
+- Python 3.10+
+- Flask (micro web framework)
+- SQLite3 (embedded database)
+- subprocess (llama.cpp management)
+
+Frontend:
+- HTML5/CSS3 (custom, no frameworks)
+- Vanilla JavaScript (ES6+)
+- Chart.js (weight visualization)
+- Google Fonts (VT323, Press Start 2P)
+
+AI Engine:
+- llama.cpp (C++ inference engine)
+- GGUF format models (quantized LLMs)
+- HTTP REST API (localhost:8080)
+
+6. DATABASE SCHEMA
+================================================================================
+
+profile (id=1):
+    height_cm, age, gender, start_weight, target_weight, created_at
+
+moods:
+    id, date (YYYY-MM-DD), mood_level (1-5), note (text)
+
+weights:
+    id, date, weight_kg, bmi
+
+workouts:
+    id, date, type, duration_min, intensity, calories
+
+ai_config (id=1):
+    model_path, context_length, system_prompt, is_running, port
+
+7. SECURITY & PRIVACY CONSIDERATIONS
+================================================================================
+
+STRENGTHS:
+- Zero network transmission of health data
+- No authentication = no passwords to breach
+- Database file easily encrypted/backed up by user
+- AI runs locally = conversations stay on device
+
+LIMITATIONS:
+- No multi-user support (single user per installation)
+- Database is plaintext (encrypt health.db manually if needed)
+- No automatic backup (user must copy health.db)
+- LAN exposure (Flask binds to 0.0.0.0, accessible on local network)
+
+8. CUSTOMIZATION OPTIONS
+================================================================================
+
+EASY:
+- Change colors: Edit CSS :root variables
+- Adjust AI personality: Edit system_prompt in app.py
+- Context window: Slider in UI (affects VRAM/RAM usage)
+
+MODERATE:
+- Add new stats: Extend database schema in init_db()
+- New chart types: Modify Chart.js config in script.js
+- Additional AI features: Extend LLMManager class
+
+ADVANCED:
+- Cloud sync: Add SFTP/Dropbox integration to app.py
+- Mobile app: Wrap in Electron or React Native
+- Multi-user: Add authentication layer, user_id to all tables
+
+9. PERFORMANCE CHARACTERISTICS
+================================================================================
+
+Startup:
+- Flask: <1 second
+- AI model loading: 10-30 seconds (depends on model size)
+
+Runtime Memory:
+- Flask app: ~50 MB
+- 7B model (Q4): ~4.5 GB VRAM (GPU) or RAM (CPU)
+- 8B model (Q5): ~6 GB VRAM/RAM
+- Database: Negligible (<10 MB for years of data)
+
+Response Times:
+- Weight logging: Instant
+- Mood saving: Instant
+- AI chat (GPU): 1-3 seconds
+- AI chat (CPU): 5-15 seconds
+
+10. FUTURE ROADMAP
+================================================================================
+
+Potential Enhancements:
+- Nutrition logging with calorie estimation
+- Sleep tracking integration
+- Photo progress timeline
+- Export to PDF/CSV
+- Voice interface (Whisper.cpp)
+- Trend prediction (simple regression)
+- Integration with fitness wearables (local Bluetooth)
+
+11. LICENSE & ATTRIBUTION
+================================================================================
+
+This project uses:
+- Flask (BSD License)
+- Chart.js (MIT License)
+- llama.cpp (MIT License)
+- Fonts: VT323, Press Start 2P (OFL License)
+
+Original application code: [Your preferred license here]
+Suggested: MIT License or GPLv3
+
+12. CONTACT & CONTRIBUTIONS
+================================================================================
+
+Created by: [Your Name]
+Repository: [GitHub URL if applicable]
+Version: 3.0
+Last Updated: 2026-01-31
+
+================================================================================
+END OF DOCUMENTATION
+================================================================================

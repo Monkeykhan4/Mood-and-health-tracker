@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEON HEALTH // SYSTEM</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="scanlines"></div>
+    
+    <div class="container">
+        <header>
+            <h1 class="glitch" data-text="NEON HEALTH">NEON HEALTH</h1>
+            <p class="subtitle">SYSTEM v3.0 // A.R.I.A. NEURAL LINK READY</p>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" onclick="switchTab('mood', this)">MOOD_MATRIX</button>
+            <button class="tab-btn" onclick="switchTab('weight', this)">BIO_METRICS</button>
+            <button class="tab-btn" onclick="switchTab('ai', this)">A.R.I.A.</button>
+        </nav>
+
+        <!-- MOOD TAB -->
+        <section id="mood-tab" class="tab-content active">
+            <div class="view-toggle">
+                <button onclick="setMoodView('month')" id="btn-month" class="retro-btn small active">MONTH VIEW</button>
+                <button onclick="setMoodView('year')" id="btn-year" class="retro-btn small">YEAR VIEW</button>
+            </div>
+
+            <div id="month-view">
+                <div class="calendar-controls">
+                    <button onclick="changeMonth(-1)" class="retro-btn">◄</button>
+                    <h2 id="current-month" class="retro-text">JANUARY 2026</h2>
+                    <button onclick="changeMonth(1)" class="retro-btn">►</button>
+                </div>
+                <div class="calendar-grid" id="calendar"></div>
+            </div>
+
+            <div id="year-view" style="display: none;">
+                <div class="calendar-controls">
+                    <button onclick="changeYear(-1)" class="retro-btn">◄</button>
+                    <h2 id="current-year" class="retro-text">2026</h2>
+                    <button onclick="changeYear(1)" class="retro-btn">►</button>
+                </div>
+                <div class="year-grid" id="year-grid"></div>
+            </div>
+
+            <div class="mood-legend">
+                <span>AWFUL</span>
+                <div class="gradient-bar"></div>
+                <span>ZENITH</span>
+            </div>
+
+            <div id="mood-modal" class="modal">
+                <div class="modal-content">
+                    <h3 id="modal-date" class="retro-text">DATE</h3>
+                    <div class="mood-selector">
+                        <div class="mood-option" style="background: #FF0055" data-level="1" onclick="selectMood(1)"></div>
+                        <div class="mood-option" style="background: #FF2A7F" data-level="2" onclick="selectMood(2)"></div>
+                        <div class="mood-option" style="background: #B026FF" data-level="3" onclick="selectMood(3)"></div>
+                        <div class="mood-option" style="background: #00D9FF" data-level="4" onclick="selectMood(4)"></div>
+                        <div class="mood-option" style="background: #00F0FF" data-level="5" onclick="selectMood(5)"></div>
+                    </div>
+                    <textarea id="mood-note" placeholder="Enter log data..."></textarea>
+                    <button onclick="saveMood()" class="retro-btn primary">SAVE TO DATABASE</button>
+                    <button onclick="closeModal()" class="retro-btn">CANCEL</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- WEIGHT TAB -->
+        <section id="weight-tab" class="tab-content">
+            <div id="profile-setup" class="setup-panel" style="display: none;">
+                <h3 class="retro-text">INITIALIZE PROFILE</h3>
+                <div class="form-grid">
+                    <input type="number" id="setup-height" placeholder="HEIGHT (CM)" class="retro-input">
+                    <input type="number" id="setup-age" placeholder="AGE" class="retro-input">
+                    <select id="setup-gender" class="retro-input">
+                        <option value="">SELECT GENDER</option>
+                        <option value="male">MALE</option>
+                        <option value="female">FEMALE</option>
+                        <option value="other">OTHER</option>
+                    </select>
+                    <input type="number" id="setup-start-weight" placeholder="CURRENT WEIGHT (KG)" class="retro-input">
+                    <input type="number" id="setup-target" placeholder="TARGET WEIGHT (KG)" class="retro-input">
+                </div>
+                <button onclick="saveProfile()" class="retro-btn primary" style="width: 100%; margin-top: 10px;">INITIALIZE SYSTEM</button>
+            </div>
+
+            <div id="weight-dashboard" class="dashboard" style="display: none;">
+                <div class="stats-bar">
+                    <div class="stat-box">
+                        <span class="stat-label">START</span>
+                        <span id="start-weight-display" class="stat-value">--</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">CURRENT</span>
+                        <span id="current-weight" class="stat-value">--</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">TARGET</span>
+                        <span id="target-display" class="stat-value">--</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">BMI</span>
+                        <span id="current-bmi" class="stat-value">--</span>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="weightChart"></canvas>
+                </div>
+
+                <div class="input-section">
+                    <input type="date" id="weight-date" class="retro-input">
+                    <input type="number" step="0.1" id="weight-input" placeholder="WEIGHT (KG)" class="retro-input">
+                    <button onclick="addWeight()" class="retro-btn primary">LOG ENTRY</button>
+                </div>
+
+                <div class="weight-history">
+                    <h4 class="retro-text" style="font-size: 0.8em; margin-bottom: 10px;">RECENT ENTRIES</h4>
+                    <div id="weight-list" class="data-list"></div>
+                </div>
+
+                <div class="progress-track">
+                    <div class="track-labels">
+                        <span id="track-start">START</span>
+                        <span id="percentage-display">0%</span>
+                        <span id="track-goal">GOAL</span>
+                    </div>
+                    <div class="track-line">
+                        <div class="runner">🏃</div>
+                        <div class="finish-line"></div>
+                    </div>
+                    <div class="progress-text" id="progress-text">INITIALIZE TO BEGIN</div>
+                </div>
+
+                <div class="profile-actions">
+                    <button onclick="openProfileEdit()" class="retro-btn small">EDIT PROFILE</button>
+                    <button onclick="resetData()" class="retro-btn small danger">ERASE ALL DATA</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI COACH TAB -->
+        <section id="ai-tab" class="tab-content">
+            <div class="ai-header">
+                <h2 class="retro-text">A.R.I.A. SYSTEM</h2>
+                <div id="ai-status" class="status-indicator offline">● OFFLINE</div>
+            </div>
+
+            <div id="ai-config" class="setup-panel">
+                <h3 class="retro-text" style="font-size: 0.8em; margin-bottom: 15px;">NEURAL LINK CONFIGURATION</h3>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="color: var(--neon-cyan); display: block; margin-bottom: 5px;">MODEL FILE:</label>
+                    <select id="model-select" class="retro-input" style="margin: 0;">
+                        <option value="">SCANNING MODELS...</option>
+                    </select>
+                </div>
+
+                <div class="slider-container" style="margin-bottom: 20px;">
+                    <label class="retro-text" style="font-size: 0.7em; display: block; margin-bottom: 5px;">CONTEXT WINDOW: <span id="ctx-value">4096</span> TOKENS</label>
+                    <input type="range" id="context-slider" min="2048" max="8192" step="1024" value="4096" class="retro-slider" oninput="updateCtxDisplay(this.value)">
+                    <div class="slider-labels">
+                        <span>2048</span>
+                        <span>4096</span>
+                        <span>8192</span>
+                    </div>
+                </div>
+
+                <div id="ai-error" style="color: #ff0000; margin-bottom: 10px; font-size: 0.9em; display: none;"></div>
+
+                <button onclick="launchARIA()" class="retro-btn primary" style="width: 100%; margin-bottom: 10px;">
+                    INITIALIZE A.R.I.A.
+                </button>
+                <button onclick="shutdownARIA()" class="retro-btn danger" style="width: 100%; display: none;" id="shutdown-btn">
+                    TERMINATE SESSION
+                </button>
+                
+                <p class="hint-text" style="margin-top: 10px;">Place .gguf files in /models folder. CUDA 12 enabled.</p>
+            </div>
+
+            <div id="ai-chat" style="display: none; flex-direction: column; height: 100%;">
+                <div class="chat-header">
+                    <h4 class="retro-text" style="font-size: 0.7em; margin: 0;">NEURAL CONVERSATION STREAM</h4>
+                    <button onclick="clearAIHistory()" class="retro-btn small" style="margin: 0; padding: 5px 10px; font-size: 0.8em;">CLEAR MEMORY</button>
+                </div>
+
+                <div class="chat-container" id="chat-history">
+                    <div class="chat-msg system">
+                        A.R.I.A. NEURAL LINK ESTABLISHED. HEALTH DATA SYNCHRONIZED. READY FOR CONSULTATION.
+                    </div>
+                </div>
+                
+                <div class="quick-log">
+                    <h4 class="retro-text" style="font-size: 0.7em; margin-bottom: 8px;">QUICK WORKOUT LOG</h4>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 5px;">
+                        <input type="text" id="workout-type" placeholder="TYPE (cardio/weights)" class="retro-input" style="margin: 0; font-size: 0.9em;">
+                        <input type="number" id="workout-duration" placeholder="MIN" class="retro-input" style="margin: 0; font-size: 0.9em;">
+                        <select id="workout-intensity" class="retro-input" style="margin: 0; font-size: 0.9em;">
+                            <option value="low">LOW</option>
+                            <option value="medium" selected>MED</option>
+                            <option value="high">HIGH</option>
+                        </select>
+                        <button onclick="logWorkout()" class="retro-btn" style="margin: 0; padding: 5px 10px;">LOG</button>
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Consult A.R.I.A..." class="retro-input" style="margin: 0;" onkeypress="if(event.key==='Enter')sendChat()">
+                    <button onclick="sendChat()" class="retro-btn primary" style="margin: 0;">TRANSMIT</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="profile-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="retro-text">EDIT PROFILE</h3>
+            <div class="form-grid">
+                <input type="number" id="edit-height" placeholder="HEIGHT (CM)" class="retro-input">
+                <input type="number" id="edit-age" placeholder="AGE" class="retro-input">
+                <select id="edit-gender" class="retro-input">
+                    <option value="male">MALE</option>
+                    <option value="female">FEMALE</option>
+                    <option value="other">OTHER</option>
+                </select>
+                <input type="number" id="edit-target" placeholder="TARGET WEIGHT (KG)" class="retro-input">
+            </div>
+            <button onclick="updateProfile()" class="retro-btn primary" style="width: 100%; margin-top: 10px;">UPDATE</button>
+            <button onclick="closeProfileModal()" class="retro-btn" style="width: 100%;">CANCEL</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
