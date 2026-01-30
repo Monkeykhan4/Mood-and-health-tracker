@@ -1,14 +1,13 @@
-================================================================================
+
 NEON HEALTH + A.R.I.A. SYSTEM - COMPLETE SETUP GUIDE
-================================================================================
+
 
 For: Windows 10/11 (Mac/Linux requires path adjustments)
 Author: Monkey Mehrab
 Version: 3.0
 
-================================================================================
+
 PART 1: REQUIRED DOWNLOADS & INSTALLATION
-================================================================================
 
 STEP 1: INSTALL PYTHON
 ----------------------
@@ -55,9 +54,7 @@ Extract to: Vaporwave-health/llama-cpp/
 Download: llama-bXXXX-bin-win-avx-x64.zip
 (Only if AVX2 version crashes)
 
-================================================================================
 PART 2: FOLDER STRUCTURE SETUP
-================================================================================
 
 Create this exact structure:
 
@@ -78,9 +75,8 @@ Vaporwave-health/                    <-- Main project folder
     ├── style.css                    <-- Styling
     └── script.js                    <-- Logic
 
-================================================================================
+
 PART 3: DOWNLOAD AI MODELS (.gguf files)
-================================================================================
 
 Place these in the /models/ folder
 
@@ -114,9 +110,7 @@ HOW TO DOWNLOAD:
 4. Click download arrow (down arrow icon)
 5. Save to Vaporwave-health/models/
 
-================================================================================
 PART 4: HARDWARE REQUIREMENTS
-================================================================================
 
 MINIMUM (CPU Only):
 -------------------
@@ -143,9 +137,8 @@ NOT SUPPORTED:
 - Windows 7/8
 - 32-bit systems
 
-================================================================================
+
 PART 5: FIRST TIME SETUP
-================================================================================
 
 1. Double-click start.bat
 2. Browser opens automatically to http://localhost:5000
@@ -158,9 +151,8 @@ PART 5: FIRST TIME SETUP
 9. Status dot turns green when ready
 10. Start chatting!
 
-================================================================================
+
 PART 6: TROUBLESHOOTING
-================================================================================
 
 ERROR: "llama-server.exe not found"
 ------------------------------------
@@ -193,9 +185,8 @@ Normal for CPU. For GPU speed, ensure:
 - -ngl 35 flag is set (GPU layers offloaded)
 - No other apps using GPU
 
-================================================================================
+
 PART 7: FILE MANIFEST (What Each File Does)
-================================================================================
 
 app.py              - Flask web server, database logic, AI integration
 start.bat           - One-click launcher (opens browser + starts server)
@@ -207,9 +198,8 @@ static/script.js    - Frontend logic, charts, AI communication
 llama-cpp/          - AI engine (llama.cpp compiled binaries)
 models/*.gguf       - AI model weights (the "brain")
 
-================================================================================
+
 PART 8: UPDATING THE APP
-================================================================================
 
 To update llama.cpp:
 1. Download new release from GitHub
@@ -221,14 +211,9 @@ To update AI model:
 2. Select in A.R.I.A. tab
 3. Old models can be deleted to save space
 
-================================================================================
+
 SUPPORT & DOCUMENTATION
-================================================================================
 
 Llama.cpp: https://github.com/ggerganov/llama.cpp
 Models: https://huggingface.co/TheBloke
 Flask: https://flask.palletsprojects.com/
-
-================================================================================
-END OF SETUP GUIDE
-================================================================================
