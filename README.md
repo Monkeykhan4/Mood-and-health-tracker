@@ -8,6 +8,7 @@ Version: 3.0
 
 
 PART 1: REQUIRED DOWNLOADS & INSTALLATION
+-----------------------------------------
 
 STEP 1: INSTALL PYTHON
 ----------------------
@@ -55,6 +56,7 @@ Download: llama-bXXXX-bin-win-avx-x64.zip
 (Only if AVX2 version crashes)
 
 PART 2: FOLDER STRUCTURE SETUP
+------------------------------
 
 Create this exact structure:
 
@@ -77,6 +79,7 @@ Vaporwave-health/                    <-- Main project folder
 
 
 PART 3: DOWNLOAD AI MODELS (.gguf files)
+----------------------------------------
 
 Place these in the /models/ folder
 
@@ -111,6 +114,7 @@ HOW TO DOWNLOAD:
 5. Save to Vaporwave-health/models/
 
 PART 4: HARDWARE REQUIREMENTS
+-----------------------------
 
 MINIMUM (CPU Only):
 -------------------
@@ -139,6 +143,7 @@ NOT SUPPORTED:
 
 
 PART 5: FIRST TIME SETUP
+------------------------
 
 1. Double-click start.bat
 2. Browser opens automatically to http://localhost:5000
@@ -153,6 +158,7 @@ PART 5: FIRST TIME SETUP
 
 
 PART 6: TROUBLESHOOTING
+-----------------------
 
 ERROR: "llama-server.exe not found"
 ------------------------------------
@@ -187,6 +193,7 @@ Normal for CPU. For GPU speed, ensure:
 
 
 PART 7: FILE MANIFEST (What Each File Does)
+-------------------------------------------
 
 app.py              - Flask web server, database logic, AI integration
 start.bat           - One-click launcher (opens browser + starts server)
@@ -200,6 +207,7 @@ models/*.gguf       - AI model weights (the "brain")
 
 
 PART 8: UPDATING THE APP
+------------------------
 
 To update llama.cpp:
 1. Download new release from GitHub
